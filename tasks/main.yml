@@ -1,0 +1,25 @@
+---
+### Checks
+- name: Import check tasks
+  ansible.builtin.import_tasks: check.yml
+
+### Import vars
+- name: Gather OS specific variables
+  ansible.builtin.include_vars: "{{ params }}"
+  vars:
+    params_:
+      files:
+        - "{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_version'] | lower }}.yml"
+        - "{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}.yml"
+        - "{{ ansible_facts['distribution'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}.yml"
+      paths:
+        - vars
+    params: "{{ lookup('first_found', params_, errors='ignore') }}"
+  when:
+    - (params | length > 0)
+
+### Install
+- name: Import install tasks
+  ansible.builtin.import_tasks: install.yml
