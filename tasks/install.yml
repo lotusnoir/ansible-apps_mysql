@@ -24,3 +24,4 @@
 - ansible.builtin.include_tasks: databases.yml
 - ansible.builtin.include_tasks: users.yml
 - ansible.builtin.include_tasks: replication.yml
+  when: (mysql_replication_master | length) > 0
